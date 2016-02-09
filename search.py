@@ -5,18 +5,18 @@ import sys
 
 class Move:
     def __init__(self, state, moved = None, prevState = None, depth = 0, accumulatedCost = 0, cost = 0):
-        self.state = state #list of tiles
-        self.prevState = prevState #prev move object
-        self.moved = moved #index of tile that moved to get this state
+        self.state = state # list of tiles
+        self.prevState = prevState # prev move object
+        self.moved = moved # index of tile that moved to get this state
         self.depth = depth
-        self.accumulatedCost = accumulatedCost #accumulated cost of previous moves
+        self.accumulatedCost = accumulatedCost # accumulated cost of previous moves
         self.cost = cost
         
     # successor function
     def move(self):
-        #from left look at each tile
-        #if tile is out of place move it to blank tile
-        #create new move object for each one of these
+        # from left look at each tile
+        # if tile is out of place move it to blank tile
+        # create new move object for each one of these
             # init with which tile moved, the prevState (move object), depth, accumulated cost, cost
             # accumulated cost and cost necessary only if isCostOn, but could just do it to keep it simple
             # accumulated cost is the cost() of the previous move
@@ -101,11 +101,11 @@ def printResult(move):
         stack.append(prev)
         prev = prev.prevState
     
-    #print initial state
+    # print initial state
     move = stack.pop()
     print("Step 0: {}".format, move.state.join())
     
-    #print the path
+    # print the path
     i = 1
     while stack:
         move = stack.pop()
@@ -114,12 +114,12 @@ def printResult(move):
         else:
             print("Step {}: move {} {} (c={})".format(i, move.moved, move.state.join(), move.cost))
 
-#Script beginning
+# Script beginning
 types = ["BFS", "DFS", "UCS", "GS", "A-star"]
 
 inputFile = ""
 
-sys.argv.pop(0) #get rid of the filename
+sys.argv.pop(0) # get rid of the filename
 
 for arg in sys.argv:
     if arg == "-cost":
