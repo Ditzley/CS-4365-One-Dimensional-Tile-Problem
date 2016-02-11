@@ -1,6 +1,6 @@
 __author__ = 'Michael Burdick and Steven Hogue'
 
-import Queue
+import queue
 import sys
 
 class Move:
@@ -43,7 +43,7 @@ class Move:
         else:
             return self.depth
 
-class StateQueue(Queue.PriorityQueue):
+class StateQueue(queue.PriorityQueue):
     searchType = None
     isCostOn = False
     
@@ -78,7 +78,7 @@ def search(start, goal):
         else:
             successors = current[1].move()
             for i in successors:
-                queue.push(i)            
+                queue.push(i)
     return None
 
 def setGoal(length):
