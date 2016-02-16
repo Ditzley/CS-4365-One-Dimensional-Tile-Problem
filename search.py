@@ -1,6 +1,6 @@
 __author__ = 'Michael Burdick and Steven Hogue'
 
-import Queue
+import queue
 import sys
 
 class Move:
@@ -60,7 +60,7 @@ class Move:
         else:
             return self.depth
 
-class StateQueue(Queue.PriorityQueue):
+class StateQueue(queue.PriorityQueue):
     searchType = None
     isCostOn = False
     
