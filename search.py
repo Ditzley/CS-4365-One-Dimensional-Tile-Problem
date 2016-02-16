@@ -1,6 +1,6 @@
 __author__ = 'Michael Burdick and Steven Hogue'
 
-import queue
+import Queue
 import sys
 
 class Move:
@@ -14,25 +14,42 @@ class Move:
         
     # successor function
     def move(self):
+        children = []
+        current = self
         # from left look at each tile
+        for index in range(len(self.state)):
+            tile = self.state[index]
+            blankIndex = self.state.index("x")
+            middle = (len(self.state) // 2)
+            #print(index, blankIndex, middle)
         # if tile is out of place move it to blank tile
         # create new move object for each one of these
-            # init with which tile moved, the prevState (move object), depth, accumulated cost, cost
+            # init with which tile moved (index), the prevState (move object), depth, accumulated cost, cost
             # accumulated cost and cost necessary only if isCostOn, but could just do it to keep it simple
             # accumulated cost is the cost() of the previous move
             # cost is the amount of tiles the move is over
-        return None
+            if tile == "B" and index >= middle and blankIndex <= middle:
+                # print("B", index, blankIndex)
+                newList = self.state
+                newList[index], newList[blankIndex] = newList[blankIndex], newList[index]
+                children.append((Move(newList, index, current, self.depth + 1, self.accumulatedCost + self.cost, abs(index - blankIndex))))
+                
+            elif tile == "W" and index <= middle and blankIndex >= middle:
+                # print("W", index, blankIndex)
+                newList = self.state
+                newList[index], newList[blankIndex] = newList[blankIndex], newList[index]
+                children.append(Move(newList, index, current, self.depth + 1, self.accumulatedCost + self.cost, abs(index - blankIndex)))
+        
+        return children
     
     # h(n)
     def outOfPlace(self):
-        sideLength = len(self.state) // 2
-        leftMax = sideLength #B
-        rightMin = sideLength + 2 #W
+        middle = len(self.state) // 2
         outOfPlace = 0
         for i in self.state:
-            if i == "B" and i.index() > leftMax:
+            if i == "B" and i.index() >= middle:
                 outOfPlace += 1
-            elif i == "W" and i.index() < rightMin:
+            elif i == "W" and i.index() <= middle:
                 outOfPlace += 1
         return outOfPlace
     
@@ -43,7 +60,7 @@ class Move:
         else:
             return self.depth
 
-class StateQueue(queue.PriorityQueue):
+class StateQueue(Queue.PriorityQueue):
     searchType = None
     isCostOn = False
     
@@ -71,13 +88,15 @@ def search(start, goal):
     queue.push(Move(start))
     while not queue.empty():
         current = queue.pop()
+        # print(current[1].state)
         
         # current[1] is necessary because we put the move object in queue using (f(n), move) tuple
         if cmp(current[1].state, goal) == 0: 
-            return current
+            return current[1]
         else:
             successors = current[1].move()
             for i in successors:
+                # print("pushed", i.state)
                 queue.push(i)
     return None
 
@@ -94,25 +113,29 @@ def setGoal(length):
     
     return goal
 
-def printResult(move):
-    stack = [move]
-    prev = move.prevState
+def printResult(final):
+    stack = [final]
+    prev = final.prevState
     while prev:
         stack.append(prev)
         prev = prev.prevState
     
-    # print initial state
-    move = stack.pop()
-    print("Step 0: {}".format, move.state.join())
+    stack.reverse()
     
     # print the path
-    i = 1
-    while stack:
-        move = stack.pop()
-        if not StateQueue.isCostOn:
-            print("Step {}: move {} {}".format(i, move.moved, move.state.join()))
+    for move in stack:
+        if stack.index(move) == 0:
+            print("Step 0: {}".format(join(move.state)))
+        elif not StateQueue.isCostOn:
+            print("Step {}: move {} {}".format(stack.index(move), move.moved, join(move.state)))
         else:
-            print("Step {}: move {} {} (c={})".format(i, move.moved, move.state.join(), move.cost))
+            print("Step {}: move {} {} (c={})".format(stack.index(move), move.moved, join(move.state), move.cost))
+        
+def join(list):
+    string = ""
+    for i in list:
+        string += i
+    return string
 
 # Script beginning
 types = ["BFS", "DFS", "UCS", "GS", "A-star"]
@@ -138,3 +161,5 @@ initialState = list(fin.read())
 goalState = setGoal(len(initialState))
 
 result = search(initialState, goalState)
+
+printResult(result)
